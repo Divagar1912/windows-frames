@@ -1,0 +1,242 @@
+Question 1:
+
+package com.selenium.frames;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+
+public class Frame_Task {
+
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+
+		
+		WebDriver driver;
+		System.setProperty("webdriver.chrome.driver", "D:\\java exercise\\My_Selenium\\exe\\chromedriver.exe");
+		driver = new ChromeDriver();
+		
+		driver.get("https://the-internet.herokuapp.com/iframe");
+		driver.manage().window().maximize();
+		
+		WebElement frame = driver.findElement(By.xpath("//iframe[@id='mce_0_ifr']"));
+		
+		driver.switchTo().frame(frame);
+		
+		WebElement ptag = driver.findElement(By.tagName("p"));
+        ptag.click();
+        ptag.clear();
+		Actions act = new Actions(driver);
+		act.click().build().perform();
+		act.sendKeys(ptag, "Hello People").build().perform();
+		
+		
+		
+		driver.close();
+		
+		
+		
+	}
+
+}
+
+
+
+
+
+
+
+Question 2:
+
+package com.java.windowhandle;
+
+import java.util.Iterator;
+import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class WindowHandle_Task {
+
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+
+		WebDriver driver ;
+		System.setProperty("webdriver.chrome.driver", "D:\\java exercise\\My_Selenium\\exe\\chromedriver.exe");
+		driver = new ChromeDriver();
+		
+		driver.get("https://the-internet.herokuapp.com/windows");
+		driver.manage().window().maximize();
+		
+		
+		String parentwindow = driver.getWindowHandle();		
+		
+		WebElement click_To_Tab = driver.findElement(By.xpath("//a[@href='/windows/new']"));
+		click_To_Tab.click();
+		Thread.sleep(3000);
+		
+		
+		Set<String> set = driver.getWindowHandles();
+		
+		Iterator<String> it = set.iterator();
+		
+		while(it.hasNext()) {
+		String childwindow =	it.next();
+			if(!parentwindow.equalsIgnoreCase(childwindow)) {
+				driver.switchTo().window(childwindow);
+				
+		WebElement nw_wndw_text = 	driver.findElement(By.xpath("//h3[text() ='New Window']"));
+		String text = nw_wndw_text.getText();
+		System.out.println("Text in the newly opened window = "+text);
+		driver.close();
+				
+		driver.switchTo().window(parentwindow);
+		Thread.sleep(4000);
+		
+		String firstwindow = driver.getWindowHandle();
+				
+		if(firstwindow.equals(parentwindow)) {
+			System.out.println("we wre in the main window");
+		}else {
+			System.out.println("we are not in the current window");
+		}
+		
+		
+		Thread.sleep(4000);
+		driver.quit();
+			
+			}
+			
+		}
+		
+		
+	}
+
+}
+
+
+OUTPUT:
+
+Text in the newly opened window = New Window
+we wre in the main window
+
+
+
+
+
+
+
+
+Question 3:
+
+package com.selenium.frames;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class Frame_Task_2 {
+
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+
+		WebDriver driver ;
+		System.setProperty("webdriver.chrome.driver", "D:\\java exercise\\My_Selenium\\exe\\chromedriver.exe");
+		driver = new ChromeDriver();
+		
+		driver.get("http://the-internet.herokuapp.com/nested_frames");
+		driver.manage().window().maximize();
+		
+        driver.switchTo().frame("frame-top");
+
+         List<WebElement> allframe = driver.findElements(By.tagName("frame"));
+         int framecount = allframe.size();
+        if (framecount == 3) {
+            System.out.println("The page has 3 frames");
+        } else {
+            System.out.println("The is no 3 frames in the page");
+        }
+
+        driver.switchTo().frame("frame-left");
+
+        WebElement leftFrameText = driver.findElement(By.tagName("body"));
+        if (leftFrameText.getText().equals("LEFT")) {
+            System.out.println("The left frame has the text 'LEFT'.");
+        } else {
+            System.out.println("The left frame does not have the text 'LEFT'.");
+        }
+
+        driver.switchTo().parentFrame();
+        Thread.sleep(3000);
+
+        driver.switchTo().frame("frame-middle");
+
+        WebElement middleFrameText = driver.findElement(By.tagName("div"));
+        if (middleFrameText.getText().equals("MIDDLE")) {
+            System.out.println("The middle frame has the text 'MIDDLE'.");
+        } else {
+            System.out.println("The middle frame does not have the text 'MIDDLE'.");
+        }
+
+
+        driver.switchTo().parentFrame();
+        Thread.sleep(3000);
+
+        driver.switchTo().frame(driver.findElement(By.xpath("//frame[@name='frame-right']")));
+        Thread.sleep(3000);
+
+        WebElement rightFrameText = driver.findElement(By.tagName("body"));
+        if (rightFrameText.getText().equals("RIGHT")) {
+            System.out.println("The right frame has the text 'RIGHT'.");
+        } else {
+            System.out.println("The right frame does not have the text 'RIGHT'.");
+        }
+
+        driver.switchTo().defaultContent();
+        Thread.sleep(3000);
+
+        driver.switchTo().frame(driver.findElement(By.xpath("//frame[@name='frame-bottom']")));
+        Thread.sleep(3000);
+
+        WebElement bottomFrameText = driver.findElement(By.tagName("body"));
+        if (bottomFrameText.getText().equals("BOTTOM")) {
+            System.out.println("The bottom frame has the text 'BOTTOM'.");
+        } else {
+            System.out.println("The bottom frame does not have the text 'BOTTOM'.");
+        }
+
+        driver.switchTo().defaultContent();
+        Thread.sleep(3000);
+
+        String pageTitle = driver.getTitle();
+        
+        if (pageTitle.equals("Frames")) {
+            System.out.println("The page title is 'Frames'.");
+        } else {
+            System.out.println("The page title is not 'Frames'.");
+        }
+
+        Thread.sleep(3000);
+        driver.quit();
+    
+        
+        
+	}
+
+}
+
+
+OUTPUT :
+The page has 3 frames
+The left frame has the text 'LEFT'.
+The middle frame has the text 'MIDDLE'.
+The right frame has the text 'RIGHT'.
+The bottom frame has the text 'BOTTOM'.
+The page title is not 'Frames'.
